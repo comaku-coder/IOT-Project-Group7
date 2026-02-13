@@ -1,0 +1,7 @@
+Timeframe,Metric,Value
+Current,MAE,3.868082112624843
+Current,RMSE,5.369613758071111
+Current,R²,0.7825212013214875
+30 Minutes In the Future,MAE,3.9395814946431886
+30 Minutes In the Future,RMSE,5.321803733905414
+30 Minutes In the Future,R²,0.7823471342460865
