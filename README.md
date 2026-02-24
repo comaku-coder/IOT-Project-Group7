@@ -83,6 +83,54 @@ As a final team project for **AAI530 (IoT and Machine Learning)**, this applicat
    - **Rolling Statistics:** 6, 12, 24-step rolling means and standard deviations for GHI, Pyranometer, and temperature
    - **Temporal Differences:** 5, 15, 30-step differences to capture rate of change
 
+### System Architecture 
+```
+┌────────────────────────────────────────────┐
+│         SOLAR FARM PHYSICAL LAYER         │
+└────────────────────────────────────────────┘
+        │
+        │  (Real-time measurements, 5-min)
+        ▼
+┌────────────────────────────────────────────┐
+│         IoT WEATHER STATION               │
+│--------------------------------------------│
+│ • GHI (Global Horizontal Radiation)       │
+│ • Pyranometer                             │
+│ • Ambient Temperature                     │
+│ • Wind Speed & Direction                  │
+│ • Rainfall                                │
+│ • Air Pressure                            │
+│ • Hail Accumulation                       │
+│ • Panel Temperature Probes                │
+└────────────────────────────────────────────┘
+        │
+        │  MQTT / Modbus / SCADA Stream
+        ▼
+┌───────────────────────────────────────────┐
+│         EDGE COMPUTE DEVICE               │
+│-------------------------------------------│
+│ Feature Engineering:                      │
+│ • 2-hour rolling windows                  │
+│ • Lag features                            │
+│ • Ramp rates                              │
+│ • Cyclical time encoding                  │
+└───────────────────────────────────────────┘
+      │
+      ▼
+────────────────────────────────────
+   CNN + LSTM + Attention Model
+────────────────────────────────────
+      │
+      ├── Predicted Active Power
+      ├── Predicted Panel Temp
+      ├── Attention Weights
+      ▼
+Time-Series Database
+      ▼
+Tableau Dashboard + Alert Engine 
+```
+
+
 ### Model Architecture
 
 **Primary Model: LSTM with Attention + Conv1D**
@@ -132,9 +180,6 @@ IOT-Project-Group7/
 ├── README.md                           # This file — project documentation
 ├── LICENSE                             # Project license
 │
-├── Data/
-│   └── 8-Site_CA-PV1-DB-CA-1A.csv     # Raw sensor data (5-min intervals, multiple years)
-│
 ├── Models/
 │   ├── model_power_forecast.keras      # Trained LSTM model (future: power forecasting)
 │   └── model_temp_forecast.keras       # Trained LSTM-Attention model (panel temperature)
@@ -155,7 +200,6 @@ IOT-Project-Group7/
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **FinalProject.ipynb**         | Interactive Jupyter notebook containing the full ML pipeline: data loading, EDA, preprocessing, feature engineering, model training, evaluation, and visualization |
 | **FinalProject.py**            | Production-ready Python script with the same pipeline; can be run standalone without Jupyter                                                                       |
-| **8-Site_CA-PV1-DB-CA-1A.csv** | Raw sensor measurements from DKASC; contains ~5-minute resolution readings for multiple years                                                                      |
 | **model_temp_forecast.keras**  | Serialized TensorFlow/Keras model for panel temperature forecasting; ready for inference                                                                           |
 | **model_power_forecast.keras** | Serialized model for power output (for future expansion)                                                                                                           |
 | **model1/2_metrics.csv**       | Model evaluation results: MAE, RMSE, R² scores on test set                                                                                                         |
